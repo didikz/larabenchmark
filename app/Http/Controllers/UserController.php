@@ -13,6 +13,7 @@ class UserController extends Controller
         $data = Cache::remember('users', 60, function () use ($user) {
             $data['user_count'] = $user->count();
             $data['users'] = $user->orderBy('email')->get();
+            \Log::info('caching');
             return $data;
         });
         return response()->json($data);
