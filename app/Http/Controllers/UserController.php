@@ -3,14 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use \Cache;
 use App\User;
 
 class UserController extends Controller
 {
     public function index(User $user)
     {
-        $data['user_count'] = $user->count();
-        $data['users'] = $user->orderBy('email')->get();
+        $data = Cache::remember('users', 60, function () use ($user) {
+            $data['user_count'] = $user->count();
+            $data['users'] = $user->orderBy('email')->get();
+            return response()->json($data); 
+        });
         return response()->json($data);
     }
 
